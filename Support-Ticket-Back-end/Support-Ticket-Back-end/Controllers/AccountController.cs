@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Support_Ticket_Back_end.DTOModels;
 using Support_Ticket_Back_end.Models;
+using Support_Ticket_Back_end.Services;
 
 namespace Support_Ticket_Back_end.Controllers
 {
@@ -23,6 +23,10 @@ namespace Support_Ticket_Back_end.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (await _userManager.FindByNameAsync(register.UserName) != null || await _userManager.FindByEmailAsync(register.Email) != null)
+                {
+                    return BadRequest("Email or Username already exists");
+                }
                 UserApp user = new UserApp
                 {
                     UserName = register.UserName,
@@ -32,7 +36,9 @@ namespace Support_Ticket_Back_end.Controllers
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Admin");
-                    return Ok();
+                    var jwtService = new JwtService(_config, _userManager);
+                    var tokenResult = await jwtService.GenerateJwtTokenAsync(user);
+                    return Ok(tokenResult);
                 }
                 else
                 {
@@ -41,6 +47,35 @@ namespace Support_Ticket_Back_end.Controllers
                         ModelState.AddModelError("", error.Description);
                     }
                     return BadRequest(ModelState);
+                }
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Login(dtoLogin login)
+        {
+            if (ModelState.IsValid)
+            {
+                UserApp? user = await _userManager.FindByNameAsync(login.username);
+                if (user != null)
+                {
+                    if (await _userManager.CheckPasswordAsync(user, login.password))
+                    {
+                        var jwtService = new JwtService(_config, _userManager);
+                        var tokenResult = await jwtService.GenerateJwtTokenAsync(user);
+                        return Ok(tokenResult);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Invalid login attempt.");
+                        return Unauthorized(ModelState);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return Unauthorized(ModelState);
                 }
             }
             return BadRequest(ModelState);
