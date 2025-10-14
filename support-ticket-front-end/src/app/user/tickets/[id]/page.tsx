@@ -1,0 +1,1 @@
+// the details page for a specific ticket and show the conversation history
