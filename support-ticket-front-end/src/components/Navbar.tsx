@@ -1,25 +1,24 @@
-"use client";
+// "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Menu, X } from "lucide-react";
 import { ModeToggle } from "./ModeToggle";
+import { cookies } from "next/headers";
+import LogoutButton from "./LogoutButton";
 
-export function Navbar() {
+export async function Navbar() {
+  const cookie = cookies();
+  const token = (await cookie).get("token")?.value;
+  const user = (await cookie).get("user")?.value;
+  // console.log("Navbar Token:", token);
+  // console.log("Navbar User:", user);
+
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -59,49 +58,26 @@ export function Navbar() {
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-4">
           
-          <ModeToggle />  
-          <Button variant="ghost" asChild>
-            <Link href="/auth/login">Login</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/auth/register">Sign Up</Link>
-          </Button>
+          <ModeToggle />
+          {token && user ? (
+            <>
+             <Button variant="outline" asChild>
+              <LogoutButton />
+             </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link href="/auth/login">Login</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/auth/register">Sign Up</Link>
+              </Button> 
+            </>
+          )
+          }
+          
         </div>
-
-        {/* Mobile Menu
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-            <div className="flex flex-col space-y-4 mt-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium hover:text-primary transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="flex flex-col space-y-2 pt-4 border-t">
-                <Button variant="outline" asChild>
-                  <Link href="/login" onClick={() => setIsOpen(false)}>
-                    Login
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/signup" onClick={() => setIsOpen(false)}>
-                    Sign Up
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet> */}
       </div>
     </nav>
   );

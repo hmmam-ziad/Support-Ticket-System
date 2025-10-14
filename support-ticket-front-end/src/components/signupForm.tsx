@@ -24,13 +24,12 @@ import {
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { registerchema, registerFormValues } from "@/schema/registerSchema"
-import { IUser } from "@/interfaces"
-import { decodeJWT } from "@/jwt/jwtDecode"
 import { registerAction } from "@/serverActions/auth.actions"
 
 
 
 export function RegisterForm() {
+  const [isLoading, setIsLoading] = React.useState(false); 
   const form = useForm<registerFormValues>({
     resolver: zodResolver(registerchema),
     defaultValues: {
@@ -42,10 +41,16 @@ export function RegisterForm() {
   })
 
   async function onSubmit(data: z.infer<typeof registerchema>) {
-    const res = await registerAction(data);
-        localStorage.setItem("token", JSON.stringify(res));
-        const user : IUser = decodeJWT(res.token);
-        localStorage.setItem("user", JSON.stringify(user));
+    try {
+      setIsLoading(true);
+      const res = await registerAction(data);
+      if (res.success) {
+        window.location.href = "/user/dashboard";
+      }
+    }
+    catch (error) {
+        console.log(error);
+    }
   }
 
   return (
@@ -150,9 +155,16 @@ export function RegisterForm() {
       </CardContent>
       <CardFooter>
         <Field orientation="vertical" className="justify-center">
-          <Button type="submit" form="form-rhf-demo">
-            Sign up
-          </Button>
+          { isLoading ? (
+            <Button disabled>
+              Creating Account...
+            </Button>
+          ) : (
+            <Button type="submit" form="form-rhf-demo">
+              Sign up
+            </Button>
+          )
+          }
           <Button asChild type="button" variant="outline" size={"sm"}  onClick={() => form.reset()}>
             <Link href="/auth/login">have an account? Sign in</Link>
           </Button>

@@ -24,12 +24,11 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { loginFormValues, loginSchema } from "@/schema/loginSchema"
 import { loginAction } from "@/serverActions/auth.actions"
-import { decodeJWT } from "@/jwt/jwtDecode"
-import { IUser } from "@/interfaces"
 
 
 
 export function LoginForm() {
+  const [isLoading, setIsLoading] = React.useState(false); 
   const form = useForm<loginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -39,10 +38,15 @@ export function LoginForm() {
   })
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    const res = await loginAction(data);
-    localStorage.setItem("token", JSON.stringify(res));
-    const user : IUser = decodeJWT(res.token);
-    localStorage.setItem("user", JSON.stringify(user));
+    try {
+      setIsLoading(true);
+      const res = await loginAction(data);
+      if (res.success) {
+        window.location.href = "/user/dashboard";
+      }
+    } catch (error) {
+        console.log(error);
+    }
   }
 
   return (
@@ -102,9 +106,16 @@ export function LoginForm() {
           </FieldGroup>
           <CardFooter>
             <Field orientation="vertical" className="justify-center mt-2.5">
-            <Button type="submit" form="form-rhf-demo">
-                Submit
-            </Button>
+            {isLoading ? (
+                <Button disabled type="button" variant="outline" size={"sm"}>
+                  Loading...
+                </Button>
+              ) : (
+                <Button type="submit" form="form-rhf-demo">
+                  Sign in
+                </Button>
+              )
+            }
             <Button asChild type="button" variant="outline" size={"sm"}>
                 <Link href="/auth/register">Don't have an account? Sign up</Link>
             </Button>
