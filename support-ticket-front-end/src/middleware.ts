@@ -1,18 +1,34 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
+
+const SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
-  const user = req.cookies.get("user")?.value;
-  const url = req.nextUrl.clone();
-  if (!token && !user && url.pathname.startsWith("/user/dashboard")) {
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
+
+  if (!token) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
   }
-  
-  return NextResponse.next();
+
+  try {
+    const decoded = jwt.verify(token, SECRET) as any;
+
+    if (req.nextUrl.pathname.startsWith("/admin") && decoded.role !== "Admin") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (req.nextUrl.pathname.startsWith("/user") && decoded.role !== "User") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    return NextResponse.next();
+  } catch (err) {
+    console.error("Invalid token:", err);
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
 }
 
 export const config = {
-  matcher: ["/user/dashboard/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/user/:path*"],
 };

@@ -16,16 +16,19 @@ export async function Navbar() {
   const cookie = cookies();
   const token = (await cookie).get("token")?.value;
   const user = (await cookie).get("user")?.value;
-  // console.log("Navbar Token:", token);
-  // console.log("Navbar User:", user);
-
-
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/services", label: "Services" },
-    { href: "/contact", label: "Contact" },
-  ];
+  const role = user ? JSON.parse(user)?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] : null;
+  const navLinks =
+  role === "Admin"
+    ? [
+        { href: "/", label: "Home" },
+        { href: "/admin", label: "Admin" },
+        { href: "/admin/users", label: "Create Ticket" },
+      ]
+    : [
+        { href: "/", label: "Home" },
+        { href: "/user/dashboard", label: "Dashboard" },
+        { href: "/user/profile", label: "Profile" },
+      ];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
