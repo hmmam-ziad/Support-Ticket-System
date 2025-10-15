@@ -3,9 +3,10 @@
 const nextConfig = {
   experimental: {
     staleTimes: {
-      dynamic: 0,  // يمنع caching الـ dynamic routes زي API
+      dynamic: 0,
+      serverActions: true,
     },
-  },
-};
+  }
+}
 
 export default nextConfig;

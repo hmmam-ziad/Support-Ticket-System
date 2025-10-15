@@ -22,7 +22,7 @@ export async function Navbar() {
     ? [
         { href: "/", label: "Home" },
         { href: "/admin", label: "Admin" },
-        { href: "/admin/users", label: "Create Ticket" },
+        { href: "/admin/users", label: "Users" },
       ]
     : [
         { href: "/", label: "Home" },
