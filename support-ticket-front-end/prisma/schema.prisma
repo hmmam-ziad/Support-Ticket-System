@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model Ticket {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  status      TicketStatus    @default(OPEN)
+  priority    TicketPriority  @default(MEDIUM)
+  userId      String
+  replies     TicketReply[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model TicketReply {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  message   String
+  senderId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticketId  String @db.ObjectId
+  createdAt DateTime @default(now())
+}
+
+enum TicketStatus {
+  OPEN
+  INPROGRESS
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
