@@ -48,3 +48,23 @@ export async function deleteUser(id: string) {
         throw err;
     }
 }
+
+export async function getUserById(id:string) {
+    try {
+        const res = await fetch(`https://localhost:7290/api/Users/GetUserByID/${id}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+                cache: "no-store",
+            });
+            if (!res.ok) {
+                throw new Error(`Server returned ${res.status}`);
+            }
+            const result = await res.json();
+            console.log(result)
+            return result;
+    }
+    catch (err) {
+        console.error("Login failed:", err);
+        throw err;
+    }
+}

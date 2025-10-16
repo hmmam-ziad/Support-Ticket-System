@@ -35,7 +35,7 @@ namespace Support_Ticket_Back_end.Controllers
                 IdentityResult result = await _userManager.CreateAsync(user, register.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "Admin");
+                    await _userManager.AddToRoleAsync(user, "User");
                     var jwtService = new JwtService(_config, _userManager);
                     var tokenResult = await jwtService.GenerateJwtTokenAsync(user);
                     return Ok(tokenResult);

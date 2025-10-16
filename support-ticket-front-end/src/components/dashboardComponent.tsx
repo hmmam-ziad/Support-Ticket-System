@@ -8,16 +8,20 @@ import {
   MessageSquare, 
   AlertCircle, 
   CheckCircle2,
-  ArrowUpCircle,
   ArrowRight,
   Calendar
 } from "lucide-react";
 import { Ticket, TicketPriority, TicketStatus } from "@/interfaces";
+import AddTiketForm from "./AddTiketForm";
 
 
 
 
 // Sample data - replace with real data from your API
+
+
+const DashboardComponent = ({id}: {id: string}) => {
+    
 const mockTickets: Ticket[] = [
   {
     id: "1",
@@ -65,7 +69,6 @@ const mockTickets: Ticket[] = [
   },
 ];
 
-const DashboardComponent = () => {
   const getStatusColor = (status: TicketStatus) => {
     switch (status) {
       case "OPEN":
@@ -131,10 +134,7 @@ const DashboardComponent = () => {
               Manage and track all your support requests
             </p>
           </div>
-          <Button>
-            <ArrowUpCircle className="mr-2 h-4 w-4" />
-            New Ticket
-          </Button>
+          <AddTiketForm userId={id}/>
         </div>
 
         {/* Stats Grid */}

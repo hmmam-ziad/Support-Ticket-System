@@ -79,8 +79,8 @@ export async function registerAction(data: z.infer<typeof registerchema>) {
 
         return { success: true, ...result };
         } catch (err) {
-            console.error("Registration failed:", err);
-            
+          console.error("Login failed:", err);
+          throw err;
         }
 };
 

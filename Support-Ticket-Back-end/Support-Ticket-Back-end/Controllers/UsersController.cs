@@ -38,5 +38,16 @@ namespace Support_Ticket_Back_end.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetUserByID(string id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
     }
 }
