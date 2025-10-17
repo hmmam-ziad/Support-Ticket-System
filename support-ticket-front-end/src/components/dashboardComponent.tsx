@@ -11,8 +11,9 @@ import {
   ArrowRight,
   Calendar
 } from "lucide-react";
-import { Ticket, TicketPriority, TicketStatus } from "@/interfaces";
+import { ITicket, TicketPriority, TicketStatus } from "@/interfaces";
 import AddTiketForm from "./AddTiketForm";
+import Link from "next/link";
 
 
 
@@ -20,60 +21,13 @@ import AddTiketForm from "./AddTiketForm";
 // Sample data - replace with real data from your API
 
 
-const DashboardComponent = ({id}: {id: string}) => {
-    
-const mockTickets: Ticket[] = [
-  {
-    id: "1",
-    title: "Login Issue - Cannot Access Dashboard",
-    description: "I'm unable to login to my account. Keep getting error 401.",
-    status: "OPEN",
-    priority: "HIGH",
-    userId: "user1",
-    replies: [],
-    createdAt: new Date("2024-10-15"),
-    updatedAt: new Date("2024-10-15"),
-  },
-  {
-    id: "2",
-    title: "Payment Gateway Not Working",
-    description: "Payment processing fails at checkout page.",
-    status: "IN_PROGRESS",
-    priority: "URGENT",
-    userId: "user2",
-    replies: [{}, {}],
-    createdAt: new Date("2024-10-14"),
-    updatedAt: new Date("2024-10-16"),
-  },
-  {
-    id: "3",
-    title: "Feature Request: Dark Mode",
-    description: "Would love to see a dark mode option in the app.",
-    status: "OPEN",
-    priority: "LOW",
-    userId: "user3",
-    replies: [{}, {}, {}],
-    createdAt: new Date("2024-10-13"),
-    updatedAt: new Date("2024-10-14"),
-  },
-  {
-    id: "4",
-    title: "Bug: Profile Picture Not Uploading",
-    description: "Cannot upload profile picture, getting 500 error.",
-    status: "CLOSED",
-    priority: "MEDIUM",
-    userId: "user4",
-    replies: [{}, {}, {}, {}],
-    createdAt: new Date("2024-10-10"),
-    updatedAt: new Date("2024-10-12"),
-  },
-];
+const DashboardComponent = ({tickets, userId}: {tickets: ITicket[], userId: string}) => {
 
-  const getStatusColor = (status: TicketStatus) => {
+  const getStatusColor = (status: ITicket["status"]) => {
     switch (status) {
       case "OPEN":
         return "bg-blue-500/10 text-blue-700 hover:bg-blue-500/20";
-      case "IN_PROGRESS":
+      case "INPROGRESS":
         return "bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20";
       case "CLOSED":
         return "bg-green-500/10 text-green-700 hover:bg-green-500/20";
@@ -82,7 +36,7 @@ const mockTickets: Ticket[] = [
     }
   };
 
-  const getPriorityColor = (priority: TicketPriority) => {
+  const getPriorityColor = (priority: ITicket["priority"]) => {
     switch (priority) {
       case "LOW":
         return "bg-slate-500/10 text-slate-700 hover:bg-slate-500/20";
@@ -90,37 +44,39 @@ const mockTickets: Ticket[] = [
         return "bg-blue-500/10 text-blue-700 hover:bg-blue-500/20";
       case "HIGH":
         return "bg-orange-500/10 text-orange-700 hover:bg-orange-500/20";
-      case "URGENT":
-        return "bg-red-500/10 text-red-700 hover:bg-red-500/20";
       default:
         return "bg-gray-500/10 text-gray-700";
     }
   };
 
-  const getStatusIcon = (status: TicketStatus) => {
+  const getStatusIcon = (status: ITicket["status"]) => {
     switch (status) {
       case "OPEN":
         return <AlertCircle className="h-4 w-4" />;
-      case "IN_PROGRESS":
+      case "INPROGRESS":
         return <Clock className="h-4 w-4" />;
       case "CLOSED":
         return <CheckCircle2 className="h-4 w-4" />;
+      default:
+        return null;
     }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date?: Date | string) => {
+    if (!date) return "Unknown date";
+    const d = typeof date === "string" ? new Date(date) : date;
     return new Intl.DateTimeFormat("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
-    }).format(new Date(date));
+    }).format(new Date(d));
   };
 
   const stats = [
-    { label: "Total Tickets", value: mockTickets.length, icon: MessageSquare },
-    { label: "Open", value: mockTickets.filter(t => t.status === "OPEN").length, icon: AlertCircle },
-    { label: "In Progress", value: mockTickets.filter(t => t.status === "IN_PROGRESS").length, icon: Clock },
-    { label: "Closed", value: mockTickets.filter(t => t.status === "CLOSED").length, icon: CheckCircle2 },
+    { label: "Total Tickets", value: tickets.length, icon: MessageSquare },
+    { label: "Open", value: tickets.filter(t => t.status === "OPEN").length, icon: AlertCircle },
+    { label: "In Progress", value: tickets.filter(t => t.status === "INPROGRESS").length, icon: Clock },
+    { label: "Closed", value: tickets.filter(t => t.status === "CLOSED").length, icon: CheckCircle2 },
   ];
 
   return (
@@ -134,7 +90,7 @@ const mockTickets: Ticket[] = [
               Manage and track all your support requests
             </p>
           </div>
-          <AddTiketForm userId={id}/>
+          <AddTiketForm userId={userId}/>
         </div>
 
         {/* Stats Grid */}
@@ -158,7 +114,7 @@ const mockTickets: Ticket[] = [
 
         {/* Tickets Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {mockTickets.map((ticket) => (
+          {tickets.map((ticket) => (
             <Card key={ticket.id} className="hover:shadow-lg transition-all hover:-translate-y-1">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
@@ -179,13 +135,13 @@ const mockTickets: Ticket[] = [
                   <Badge className={getStatusColor(ticket.status)} variant="secondary">
                     <span className="flex items-center gap-1">
                       {getStatusIcon(ticket.status)}
-                      {ticket.status.replace("_", " ")}
+                      {ticket.status?.replace("_", " ")}
                     </span>
                   </Badge>
-                  {ticket.replies.length > 0 && (
+                  {(ticket.replies?.length ?? 0) > 0 && (
                     <Badge variant="outline" className="gap-1">
                       <MessageSquare className="h-3 w-3" />
-                      {ticket.replies.length} {ticket.replies.length === 1 ? "Reply" : "Replies"}
+                      {ticket.replies?.length ?? 0} {(ticket.replies?.length ?? 0) === 1 ? "Reply" : "Replies"}
                     </Badge>
                   )}
                 </div>
@@ -193,14 +149,16 @@ const mockTickets: Ticket[] = [
                 {/* Date */}
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                  Created {formatDate(ticket.createdAt)}
+                  Created {formatDate(ticket?.createdAt)}
                 </div>
 
                 {/* Action Button */}
-                <Button variant="outline" className="w-full" size="sm">
-                  View Details
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <Link href={`/user/tickets/${ticket.id}`}>
+                    <Button variant="outline" className="w-full" size="sm">
+                      View Details
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
               </CardContent>
             </Card>
           ))}
