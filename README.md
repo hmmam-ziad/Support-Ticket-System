@@ -96,6 +96,10 @@ dotnet run
 - User management
 
 ## 📸 Screenshots
+<img width="1903" height="841" alt="Screenshot 2025-10-17 194534" src="https://github.com/user-attachments/assets/df22dae7-745a-46a7-8765-29b27a17e3b8" />
+<img width="1904" height="918" alt="Screenshot 2025-10-17 194600" src="https://github.com/user-attachments/assets/8e5e55e9-6b93-4879-8f71-8755711e3c19" />
+<img width="1901" height="916" alt="Screenshot 2025-10-17 194628" src="https://github.com/user-attachments/assets/10cbdf35-b3fc-4026-8f02-019f0c547283" />
+<img width="1903" height="915" alt="Screenshot 2025-10-17 194642" src="https://github.com/user-attachments/assets/22ebaa1c-d6d8-4ee2-a620-26dc96d13fc0" />
 
 ## 🤝 Contributing
 
