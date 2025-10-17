@@ -22,3 +22,12 @@ export interface ITicket {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface ITicketReply {
+  id: string
+  message: string
+  senderId: string
+  ticket:    ITicket
+  ticketId:  string
+  createdAt?: Date
+}

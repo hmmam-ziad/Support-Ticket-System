@@ -42,7 +42,7 @@ export function LoginForm() {
       setIsLoading(true);
       const res = await loginAction(data);
       if (res.success) {
-        window.location.href = "/user/dashboard";
+        window.location.href = "/";
       }
     } catch (error) {
         console.log(error);

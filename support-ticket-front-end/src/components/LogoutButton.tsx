@@ -2,18 +2,31 @@
 
 import { logoutAction } from "@/serverActions/auth.actions";
 import { Button } from "./ui/button";
+import { useState } from "react";
+import Spinner from "./spinner";
 
 
 const LogoutButton = () => {
+    const [isLoading, setIsLoading] = useState(false);
 
     // implement logout functionality
     const handleLogout = async () => {
+        setIsLoading(true);
         const res = await logoutAction();
-        console.log(res);
+
         window.location.href = "/auth/login";
     }
     return(
-        <Button onClick={() => handleLogout()}>Logout</Button>
+       <>
+            {isLoading ? (
+            <Button disabled>
+                <Spinner />
+            </Button>
+            ) : (
+            <Button onClick={() => handleLogout()}>Logout</Button>
+            )}
+        </>
+        
     );
 }
 

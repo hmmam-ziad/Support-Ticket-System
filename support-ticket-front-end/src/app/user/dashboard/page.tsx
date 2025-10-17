@@ -11,6 +11,7 @@ import { cookies } from "next/headers";
   let userId: string = '';
   userId = String(user?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] ?? '');
   const tickets = await getTicketsAction({userId});
+  
 
     return(
       <DashboardComponent tickets={tickets} userId={userId} />

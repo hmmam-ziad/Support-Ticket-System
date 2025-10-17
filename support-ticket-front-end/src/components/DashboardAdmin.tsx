@@ -11,17 +11,11 @@ import {
   ArrowRight,
   Calendar
 } from "lucide-react";
-import { ITicket, TicketPriority, TicketStatus } from "@/interfaces";
-import AddTiketForm from "./AddTiketForm";
+import { ITicket } from "@/interfaces";
 import Link from "next/link";
 
 
-
-
-// Sample data - replace with real data from your API
-
-
-const DashboardComponent = ({tickets, userId}: {tickets: ITicket[], userId: string}) => {
+const DashboardAdmin = ({tickets}: {tickets: ITicket[]}) => {
 
   const getStatusColor = (status: ITicket["status"]) => {
     switch (status) {
@@ -87,10 +81,9 @@ const DashboardComponent = ({tickets, userId}: {tickets: ITicket[], userId: stri
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Support Tickets</h1>
             <p className="text-muted-foreground mt-1">
-              Manage and track all your support requests
+              Manage and track all support requests
             </p>
           </div>
-          <AddTiketForm userId={userId}/>
         </div>
 
         {/* Stats Grid */}
@@ -164,22 +157,17 @@ const DashboardComponent = ({tickets, userId}: {tickets: ITicket[], userId: stri
           ))}
         </div>
 
-        {/* Empty State - uncomment if no tickets */}
         {tickets.length === 0 && (
           <Card className="py-16">
             <CardContent className="text-center">
               <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground opacity-50 mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Tickets Yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Get started by creating your first support ticket
-              </p>
-              <AddTiketForm userId={userId}/>
             </CardContent>
           </Card>
-        )}
+        )} 
       </div>
     </div>
   );
 };
 
-export default DashboardComponent;
+export default DashboardAdmin;

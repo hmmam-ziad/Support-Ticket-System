@@ -45,7 +45,7 @@ export function RegisterForm() {
       setIsLoading(true);
       const res = await registerAction(data);
       if (res.success) {
-        window.location.href = "/user/dashboard";
+        window.location.href = "/";
       }
     }
     catch (error) {

@@ -24,3 +24,13 @@ export const ticketschema = z.object({
 });
 
 
+export type TicketChangeValues = z.infer<typeof ticketChabgeSchema>;
+
+
+export const ticketChabgeSchema = z.object(
+  {
+    status: TicketStatusEnum.default("OPEN"),
+    priority: TicketPriorityEnum.default("MEDIUM"),
+  }
+);
+
