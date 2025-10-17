@@ -1,1 +1,0 @@
-// show the details of a ticket
